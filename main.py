@@ -6,22 +6,22 @@ from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTyp
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# Gemini setup (NEW)
+# Gemini client
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_msg = update.message.text
+    text = update.message.text
 
     try:
         response = client.models.generate_content(
             model="gemini-2.0-flash",
-            contents=user_msg
+            contents=text
         )
-        ai_reply = response.text
+        answer = response.text if response.text else "Koi reply nahi aaya 😅"
     except Exception as e:
-        ai_reply = "Error: " + str(e)
+        answer = "Error: " + str(e)
 
-    await update.message.reply_text(ai_reply)
+    await update.message.reply_text(answer)
 
 
 def main():
